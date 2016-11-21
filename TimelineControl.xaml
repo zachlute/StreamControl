@@ -129,7 +129,7 @@
                                 <PathGeometry>
                                     <PathGeometry.Figures>
                                         <PathFigure StartPoint="0,20" IsClosed="False">
-                                            <BezierSegment Point1="10,20" Point2="10,30" Point3="22,40"/>
+                                            <BezierSegment Point1="15,20" Point2="10,30" Point3="22,40"/>
                                         </PathFigure>
                                     </PathGeometry.Figures>
                                 </PathGeometry>
