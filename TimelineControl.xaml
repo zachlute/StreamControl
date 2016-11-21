@@ -53,7 +53,7 @@
 
                         <!-- Source Line -->
                         <Line X1="0" Y1="20"
-                              X2="20" Y2="20"
+                              X2="22" Y2="20"
                               Stroke="{StaticResource LineBrush}"
                               StrokeThickness="2"/>
                         
@@ -97,15 +97,15 @@
                         </Ellipse>
 
                         <!-- Source Line End Cap -->
-                        <Line X1="15" Y1="20"
-                              X2="30" Y2="20"
+                        <Line X1="25" Y1="20"
+                              X2="40" Y2="20"
                               Stroke="{StaticResource BackgroundBrush}"
                               StrokeThickness="2"
                               Visibility="{Binding IsCurrent, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                         <!-- Dest Line -->
                         <Line X1="0" Y1="40"
-                              X2="20" Y2="40"
+                              X2="22" Y2="40"
                               Stroke="{StaticResource LineBrush}"
                               StrokeThickness="2">
                             <Line.Style>
@@ -129,7 +129,7 @@
                                 <PathGeometry>
                                     <PathGeometry.Figures>
                                         <PathFigure StartPoint="0,20" IsClosed="False">
-                                            <BezierSegment Point1="10,20" Point2="10,30" Point3="20,40"/>
+                                            <BezierSegment Point1="10,20" Point2="10,30" Point3="22,40"/>
                                         </PathFigure>
                                     </PathGeometry.Figures>
                                 </PathGeometry>
@@ -198,7 +198,7 @@
 
                         <!-- Current Dot -->
                         <Canvas x:Name="CurrentDot"
-                                Canvas.Top="30" Canvas.Left="6"
+                                Canvas.Top="30" Canvas.Left="16"
                                 Visibility="{Binding IsCurrent, Converter={StaticResource BooleanToVisibilityConverter}}"
                                 ToolTip="{Binding Message}"
                                 MouseLeftButtonDown="Dot_MouseLeftButtonDown">
@@ -243,13 +243,13 @@
 
                         <Canvas.Style>
                             <Style TargetType="Canvas">
-                                <Setter Property="Width" Value="20"/>
+                                <Setter Property="Width" Value="22"/>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsSource}" Value="True">
-                                        <Setter Property="Width" Value="20"/>
+                                        <Setter Property="Width" Value="22"/>
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding IsCurrent}" Value="True">
-                                        <Setter Property="Width" Value="30"/>
+                                        <Setter Property="Width" Value="40"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
