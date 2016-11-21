@@ -10,9 +10,24 @@
         <SolidColorBrush x:Key="BackgroundBrush" Color="#333333"/>
         <SolidColorBrush x:Key="EmptyLineBrush" Color="#242424"/>
         <SolidColorBrush x:Key="LineBrush" Color="#94999B"/>
+        <SolidColorBrush x:Key="HoverLineBrush" Color="#B1B7BA"/>
+        <SolidColorBrush x:Key="DotBrush" Color="#94999B"/>
+        <SolidColorBrush x:Key="HoverDotBrush" Color="#D6D6D6"/>
+        <SolidColorBrush x:Key="SelectedDotBrush" Color="#3C9FDA"/>
+        <SolidColorBrush x:Key="HoverSelectedDotBrush" Color="#54DFFF"/>
     </UserControl.Resources>
     <Grid Margin="5" Background="{StaticResource BackgroundBrush}">
-        <ItemsControl ItemsSource="{Binding Revisions}" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+        <Canvas x:Name="Baseline" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="60">
+            <Line X1="0" Y1="20"
+                  X2="{Binding ActualWidth, Mode=OneWay, ElementName=Baseline}" Y2="20"
+                  Stroke="{StaticResource LineBrush}"
+                  StrokeThickness="2" />
+            <Line X1="0" Y1="40"
+                  X2="{Binding ActualWidth, Mode=OneWay, ElementName=Baseline}" Y2="40"
+                  Stroke="{StaticResource EmptyLineBrush}"
+                  StrokeThickness="2" />
+        </Canvas>
+        <ItemsControl ItemsSource="{Binding Revisions}" HorizontalAlignment="Right" VerticalAlignment="Top">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <VirtualizingStackPanel Orientation="Horizontal"/>
@@ -30,9 +45,11 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="local:Revision">
                     <Canvas Height="60">
+                        <!--
                         <Border Width="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource AncestorType=Canvas}}"
                                 Height="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource AncestorType=Canvas}}"
                                 BorderThickness="1" BorderBrush="Red"/>
+                        -->
 
                         <!-- Source Line -->
                         <Line X1="0" Y1="20"
@@ -45,24 +62,95 @@
                                  Width="8" Height="8"
                                  Stroke="{StaticResource BackgroundBrush}"
                                  StrokeThickness="1"
-                                 Fill="{StaticResource LineBrush}"
-                                 ToolTip="{Binding Message}"
-                                 Visibility="{Binding IsSource, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                 ToolTip="{Binding Message}">
+                            <Ellipse.Style>
+                                <Style TargetType="Ellipse">
+                                    <Setter Property="Visibility" Value="{Binding IsSource, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                    <Setter Property="Fill" Value="{StaticResource DotBrush}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsCreate}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Fill" Value="{StaticResource HoverDotBrush}"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Ellipse.Style>
+                        </Ellipse>
+
+                        <!-- Source Line End Cap -->
+                        <Line X1="15" Y1="20"
+                              X2="30" Y2="20"
+                              Stroke="{StaticResource BackgroundBrush}"
+                              StrokeThickness="2"
+                              Visibility="{Binding IsCurrent, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                         <!-- Dest Line -->
                         <Line X1="0" Y1="40"
                               X2="20" Y2="40"
                               Stroke="{StaticResource LineBrush}"
-                              StrokeThickness="2"/>
+                              StrokeThickness="2">
+                            <Line.Style>
+                                <Style TargetType="Line">
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding IsSource}" Value="True"/>
+                                                <Condition Binding="{Binding IsCreate}" Value="True"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Line.Style>
+                        </Line>
 
-                        
+                        <!-- Branch Curve -->
+                        <Path Stroke="{StaticResource LineBrush}" StrokeThickness="2">
+                            <Path.Data>
+                                <PathGeometry>
+                                    <PathGeometry.Figures>
+                                        <PathFigure StartPoint="0,20" IsClosed="False">
+                                            <BezierSegment Point1="10,20" Point2="10,30" Point3="20,40"/>
+                                        </PathFigure>
+                                    </PathGeometry.Figures>
+                                </PathGeometry>
+                            </Path.Data>
+                            <Path.Style>
+                                <Style TargetType="Path">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding IsSource}" Value="True"/>
+                                                <Condition Binding="{Binding IsCreate}" Value="True"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Path.Style>
+                        </Path>
+
                         <!-- Dest Dot -->
-                        <Canvas Canvas.Top="32" Canvas.Left="2"
+                        <Canvas x:Name="DestDot"
+                                Canvas.Top="32" Canvas.Left="2"
                                 ToolTip="{Binding Message}">
                             <Ellipse Width="16" Height="16"
                                      Stroke="{StaticResource BackgroundBrush}"
-                                     StrokeThickness="1"
-                                     Fill="{StaticResource LineBrush}"/>
+                                     StrokeThickness="1">
+                                <Ellipse.Style>
+                                    <Style TargetType="Ellipse">
+                                        <Setter Property="Fill" Value="{StaticResource DotBrush}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=DestDot, Path=IsMouseOver}" Value="True">
+                                                <Setter Property="Fill" Value="{StaticResource HoverDotBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Ellipse.Style>
+                            </Ellipse>
                             <Ellipse Canvas.Top="4" Canvas.Left="4"
                                      Width="8" Height="8"
                                      Stroke="{StaticResource BackgroundBrush}"
@@ -81,13 +169,24 @@
                         </Canvas>
 
                         <!-- Current Dot -->
-                        <Canvas Canvas.Top="30" Canvas.Left="6"
+                        <Canvas x:Name="CurrentDot"
+                                Canvas.Top="30" Canvas.Left="6"
                                 Visibility="{Binding IsCurrent, Converter={StaticResource BooleanToVisibilityConverter}}"
                                 ToolTip="{Binding Message}">
                             <Ellipse Width="20" Height="20"
                                      Stroke="{StaticResource BackgroundBrush}"
-                                     StrokeThickness="1"
-                                     Fill="{StaticResource LineBrush}"/>
+                                     StrokeThickness="1">
+                                <Ellipse.Style>
+                                    <Style TargetType="Ellipse">
+                                        <Setter Property="Fill" Value="{StaticResource DotBrush}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=CurrentDot, Path=IsMouseOver}" Value="True">
+                                                <Setter Property="Fill" Value="{StaticResource HoverDotBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Ellipse.Style>
+                            </Ellipse>
                             <Ellipse Canvas.Top="4" Canvas.Left="4"
                                      Width="12" Height="12"
                                      Stroke="{StaticResource BackgroundBrush}"
