@@ -1,0 +1,136 @@
+﻿<UserControl x:Class="StreamControl.TimelineControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:StreamControl"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="BackgroundBrush" Color="#333333"/>
+        <SolidColorBrush x:Key="EmptyLineBrush" Color="#242424"/>
+        <SolidColorBrush x:Key="LineBrush" Color="#94999B"/>
+    </UserControl.Resources>
+    <Grid Margin="5" Background="{StaticResource BackgroundBrush}">
+        <ItemsControl ItemsSource="{Binding Revisions}" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.Template>
+                <ControlTemplate TargetType="ItemsControl">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                        <ItemsPresenter/>
+                    </ScrollViewer>
+                </ControlTemplate>
+            </ItemsControl.Template>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="local:Revision">
+                    <Canvas Height="60">
+                        <Border Width="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource AncestorType=Canvas}}"
+                                Height="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource AncestorType=Canvas}}"
+                                BorderThickness="1" BorderBrush="Red"/>
+
+                        <!-- Source Line -->
+                        <Line X1="0" Y1="20"
+                              X2="20" Y2="20"
+                              Stroke="{StaticResource LineBrush}"
+                              StrokeThickness="2"/>
+                        
+                        <!-- Source Dot -->
+                        <Ellipse Canvas.Top="16" Canvas.Left="6"
+                                 Width="8" Height="8"
+                                 Stroke="{StaticResource BackgroundBrush}"
+                                 StrokeThickness="1"
+                                 Fill="{StaticResource LineBrush}"
+                                 ToolTip="{Binding Message}"
+                                 Visibility="{Binding IsSource, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <!-- Dest Line -->
+                        <Line X1="0" Y1="40"
+                              X2="20" Y2="40"
+                              Stroke="{StaticResource LineBrush}"
+                              StrokeThickness="2"/>
+
+                        
+                        <!-- Dest Dot -->
+                        <Canvas Canvas.Top="32" Canvas.Left="2"
+                                ToolTip="{Binding Message}">
+                            <Ellipse Width="16" Height="16"
+                                     Stroke="{StaticResource BackgroundBrush}"
+                                     StrokeThickness="1"
+                                     Fill="{StaticResource LineBrush}"/>
+                            <Ellipse Canvas.Top="4" Canvas.Left="4"
+                                     Width="8" Height="8"
+                                     Stroke="{StaticResource BackgroundBrush}"
+                                     StrokeThickness="1"
+                                     Fill="{StaticResource BackgroundBrush}"/>
+                            <Canvas.Style>
+                                <Style TargetType="Canvas">
+                                    <Setter Property="Visibility" Value="{Binding IsDest, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Canvas.Style>
+                        </Canvas>
+
+                        <!-- Current Dot -->
+                        <Canvas Canvas.Top="30" Canvas.Left="6"
+                                Visibility="{Binding IsCurrent, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                ToolTip="{Binding Message}">
+                            <Ellipse Width="20" Height="20"
+                                     Stroke="{StaticResource BackgroundBrush}"
+                                     StrokeThickness="1"
+                                     Fill="{StaticResource LineBrush}"/>
+                            <Ellipse Canvas.Top="4" Canvas.Left="4"
+                                     Width="12" Height="12"
+                                     Stroke="{StaticResource BackgroundBrush}"
+                                     StrokeThickness="1"
+                                     Fill="{StaticResource BackgroundBrush}"/>
+                            <Line X1="2" Y1="2"
+                                  X2="18" Y2="18"
+                                  Stroke="{StaticResource BackgroundBrush}"
+                                  StrokeThickness="2"/>
+                            <Line X1="18" Y1="2"
+                                  X2="2" Y2="18"
+                                  Stroke="{StaticResource BackgroundBrush}"
+                                  StrokeThickness="2"/>
+                        </Canvas>
+
+                        <Canvas.Style>
+                            <Style TargetType="Canvas">
+                                <Setter Property="Width" Value="20"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsSource}" Value="True">
+                                        <Setter Property="Width" Value="20"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                                        <Setter Property="Width" Value="30"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Canvas.Style>
+                    </Canvas>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+    <!--
+    <Canvas x:Name="BackgroundCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#333333">
+        <Line X1="0" Y1="50"
+              X2="{Binding ActualWidth, Mode=OneWay, ElementName=Background}" Y2="50"
+              Stroke="#B1B7BA"
+              StrokeThickness='2' />
+        <Line X1="0" Y1="100"
+              X2="{Binding ActualWidth, Mode=OneWay, ElementName=Background}" Y2="100"
+              Stroke="#B1B7BA"
+              StrokeThickness='2' />
+    </Canvas>
+    -->
+</UserControl>
