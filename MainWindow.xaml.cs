@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -37,7 +39,7 @@ namespace StreamControl {
         }
     }
 
-    public class Revision {
+    public class Revision : INotifyPropertyChanged {
         public bool IsSource
         {
             get;
@@ -66,6 +68,19 @@ namespace StreamControl {
             get;
         }
 
+        bool m_isSelected;
+        public bool IsSelected
+        {
+            get { return m_isSelected; }
+            set
+            {
+                if (m_isSelected != value) {
+                    m_isSelected = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         public Revision(DateTime time, string message, bool isSource, bool isCreate = false, bool isCurrent = false) {
             Time = time;
             Message = message;
@@ -73,6 +88,13 @@ namespace StreamControl {
             IsCreate = isCreate;
             IsCurrent = isCurrent;
         }
+
+        void RaisePropertyChanged([CallerMemberName]string propertyName = "") {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 
     /// <summary>

@@ -18,8 +18,24 @@ namespace StreamControl {
     /// Interaction logic for TimelineControl.xaml
     /// </summary>
     public partial class TimelineControl : UserControl {
+        public Revision SelectedRevision
+        {
+            get;
+            private set;
+        }
+
         public TimelineControl () {
             InitializeComponent();
+        }
+
+        private void Dot_MouseLeftButtonDown (object sender, MouseButtonEventArgs e) {
+            var revision = ((FrameworkElement)sender).DataContext as Revision;
+            if (revision != null) {
+                if (SelectedRevision != null)
+                    SelectedRevision.IsSelected = false;
+                revision.IsSelected = true;
+                SelectedRevision = revision;
+            }
         }
     }
 }

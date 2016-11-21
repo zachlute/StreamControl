@@ -58,13 +58,16 @@
                               StrokeThickness="2"/>
                         
                         <!-- Source Dot -->
-                        <Ellipse Canvas.Top="16" Canvas.Left="6"
-                                 Width="8" Height="8"
-                                 Stroke="{StaticResource BackgroundBrush}"
+                        <Ellipse Stroke="{StaticResource BackgroundBrush}"
                                  StrokeThickness="1"
-                                 ToolTip="{Binding Message}">
+                                 ToolTip="{Binding Message}"
+                                 MouseLeftButtonDown="Dot_MouseLeftButtonDown">
                             <Ellipse.Style>
                                 <Style TargetType="Ellipse">
+                                    <Setter Property="Canvas.Top" Value="16"/>
+                                    <Setter Property="Canvas.Left" Value="6"/>
+                                    <Setter Property="Width" Value="8"/>
+                                    <Setter Property="Height" Value="8"/>
                                     <Setter Property="Visibility" Value="{Binding IsSource, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                                     <Setter Property="Fill" Value="{StaticResource DotBrush}"/>
                                     <Style.Triggers>
@@ -74,6 +77,20 @@
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="Fill" Value="{StaticResource HoverDotBrush}"/>
                                         </Trigger>
+                                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="Canvas.Top" Value="13"/>
+                                            <Setter Property="Canvas.Left" Value="3"/>
+                                            <Setter Property="Width" Value="14"/>
+                                            <Setter Property="Height" Value="14"/>
+                                            <Setter Property="Fill" Value="{StaticResource SelectedDotBrush}"/>
+                                        </DataTrigger>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding IsSelected}" Value="True"/>
+                                                <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Fill" Value="{StaticResource HoverSelectedDotBrush}"/>
+                                        </MultiDataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </Ellipse.Style>
@@ -136,7 +153,8 @@
                         <!-- Dest Dot -->
                         <Canvas x:Name="DestDot"
                                 Canvas.Top="32" Canvas.Left="2"
-                                ToolTip="{Binding Message}">
+                                ToolTip="{Binding Message}"
+                                MouseLeftButtonDown="Dot_MouseLeftButtonDown">
                             <Ellipse Width="16" Height="16"
                                      Stroke="{StaticResource BackgroundBrush}"
                                      StrokeThickness="1">
@@ -147,6 +165,16 @@
                                             <DataTrigger Binding="{Binding ElementName=DestDot, Path=IsMouseOver}" Value="True">
                                                 <Setter Property="Fill" Value="{StaticResource HoverDotBrush}"/>
                                             </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                <Setter Property="Fill" Value="{StaticResource SelectedDotBrush}"/>
+                                            </DataTrigger>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding IsSelected}" Value="True"/>
+                                                    <Condition Binding="{Binding ElementName=DestDot, Path=IsMouseOver}" Value="True"/>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Fill" Value="{StaticResource HoverSelectedDotBrush}"/>
+                                            </MultiDataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </Ellipse.Style>
@@ -172,7 +200,8 @@
                         <Canvas x:Name="CurrentDot"
                                 Canvas.Top="30" Canvas.Left="6"
                                 Visibility="{Binding IsCurrent, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                ToolTip="{Binding Message}">
+                                ToolTip="{Binding Message}"
+                                MouseLeftButtonDown="Dot_MouseLeftButtonDown">
                             <Ellipse Width="20" Height="20"
                                      Stroke="{StaticResource BackgroundBrush}"
                                      StrokeThickness="1">
@@ -183,6 +212,16 @@
                                             <DataTrigger Binding="{Binding ElementName=CurrentDot, Path=IsMouseOver}" Value="True">
                                                 <Setter Property="Fill" Value="{StaticResource HoverDotBrush}"/>
                                             </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                <Setter Property="Fill" Value="{StaticResource SelectedDotBrush}"/>
+                                            </DataTrigger>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding IsSelected}" Value="True"/>
+                                                    <Condition Binding="{Binding ElementName=CurrentDot, Path=IsMouseOver}" Value="True"/>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Fill" Value="{StaticResource HoverSelectedDotBrush}"/>
+                                            </MultiDataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </Ellipse.Style>
