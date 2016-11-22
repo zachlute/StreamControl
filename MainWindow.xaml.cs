@@ -29,7 +29,7 @@ namespace StreamControl {
                 new Revision(time.AddMinutes(-5), "Source created", true, true, false),
                 new Revision(time.AddMinutes(-4), "Dest created", false, true, false),
                 new Revision(time.AddMinutes(-3), "Change in source", true),
-                new Revision(time.AddMinutes(-2), "Change in dest", false), 
+                new Revision(time.AddMinutes(-2), "Change in dest with a really really long description so that it overflows the tooltip", false), 
                 new Revision(time.AddMinutes(-1.5), "Change in source 2", true),
                 new Revision(time.AddMinutes(-1), "Change in source 3", true),
                 new Revision(time.AddMinutes(-0.5), "Change in dest 2", false),
@@ -68,6 +68,11 @@ namespace StreamControl {
             get;
         }
 
+        public string User
+        {
+            get;
+        }
+
         bool m_isSelected;
         public bool IsSelected
         {
@@ -87,6 +92,7 @@ namespace StreamControl {
             IsSource = isSource;
             IsCreate = isCreate;
             IsCurrent = isCurrent;
+            User = "Zach Lute";
         }
 
         void RaisePropertyChanged([CallerMemberName]string propertyName = "") {

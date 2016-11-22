@@ -15,6 +15,50 @@
         <SolidColorBrush x:Key="HoverDotBrush" Color="#D6D6D6"/>
         <SolidColorBrush x:Key="SelectedDotBrush" Color="#3C9FDA"/>
         <SolidColorBrush x:Key="HoverSelectedDotBrush" Color="#54DFFF"/>
+        <SolidColorBrush x:Key="ToolTipBorderBrush" Color="#CACACA"/>
+        <SolidColorBrush x:Key="ToolTipBackgroundBrush" Color="White"/>
+
+        <local:TimeAgoConverter x:Key="TimeAgoConverter"/>
+
+        <Style TargetType="{x:Type ToolTip}">
+            <Setter Property="HorizontalOffset" Value="-150"/>
+            <Setter Property="VerticalOffset" Value="20"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToolTip}">
+                        <Grid x:Name="Grid" Width="300">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="10" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Rectangle Fill="{StaticResource ToolTipBackgroundBrush}" Stroke="{StaticResource ToolTipBorderBrush}" Grid.Row="1" />
+                            <Path Fill="{StaticResource ToolTipBackgroundBrush}" Stroke="{StaticResource ToolTipBorderBrush}" HorizontalAlignment="Left" 
+                                  Margin="{TemplateBinding Tag}" Width="20" Grid.Row="0"
+                                  Data="M 0,11 L 10,0 L 20,11" />
+                            <ContentPresenter Margin="8" Grid.Row="1" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Placement" Value="Bottom" />
+            <!-- Event to adjust horizontal position of the pointy part -->
+            <EventSetter Event="Opened" Handler="RevisionToolTip_OnOpened" />
+        </Style>
+
+        <StackPanel x:Key="RevisionToolTipContent">
+            <TextBlock Text="{Binding Message}" TextTrimming="WordEllipsis"/>
+            <TextBlock Foreground="#7F7F7F">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}{0} by {1}">
+                        <Binding Path="Time" Mode="OneWay" Converter="{StaticResource TimeAgoConverter}"/>
+                        <Binding Path="User"/>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+        </StackPanel>
+        
     </UserControl.Resources>
     <Grid Margin="5" Background="{StaticResource BackgroundBrush}">
         <Canvas x:Name="Baseline" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="60">
@@ -56,13 +100,14 @@
                               X2="22" Y2="20"
                               Stroke="{StaticResource LineBrush}"
                               StrokeThickness="2"/>
-                        
+
                         <!-- Source Dot -->
                         <Canvas x:Name="SourceDot"
                                 Canvas.Top="8"
                                 Width="22" Height="22"
                                 Background="Transparent"
-                                ToolTip="{Binding Message}"
+                                ToolTip="{StaticResource RevisionToolTipContent}"
+                                ToolTipService.Placement="Bottom"
                                 MouseLeftButtonDown="Dot_MouseLeftButtonDown">
                             <Ellipse Stroke="{StaticResource BackgroundBrush}"
                                      StrokeThickness="1">
@@ -72,7 +117,7 @@
                                         <Setter Property="Canvas.Left" Value="7"/>
                                         <Setter Property="Width" Value="8"/>
                                         <Setter Property="Height" Value="8"/>
-                                        
+
                                         <Setter Property="Fill" Value="{StaticResource DotBrush}"/>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding ElementName=SourceDot, Path=IsMouseOver}" Value="True">
@@ -165,7 +210,8 @@
                         <!-- Dest Dot -->
                         <Canvas x:Name="DestDot"
                                 Canvas.Top="32" Canvas.Left="3"
-                                ToolTip="{Binding Message}"
+                                ToolTip="{StaticResource RevisionToolTipContent}"
+                                ToolTipService.Placement="Bottom"
                                 Background="Transparent"
                                 MouseLeftButtonDown="Dot_MouseLeftButtonDown">
                             <Ellipse Width="16" Height="16"
@@ -213,7 +259,8 @@
                         <Canvas x:Name="CurrentDot"
                                 Canvas.Top="30" Canvas.Left="16"
                                 Visibility="{Binding IsCurrent, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                ToolTip="{Binding Message}"
+                                ToolTip="{StaticResource RevisionToolTipContent}"
+                                ToolTipService.Placement="Bottom"
                                 MouseLeftButtonDown="Dot_MouseLeftButtonDown">
                             <Ellipse Width="20" Height="20"
                                      Stroke="{StaticResource BackgroundBrush}"
@@ -272,16 +319,4 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
     </Grid>
-    <!--
-    <Canvas x:Name="BackgroundCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#333333">
-        <Line X1="0" Y1="50"
-              X2="{Binding ActualWidth, Mode=OneWay, ElementName=Background}" Y2="50"
-              Stroke="#B1B7BA"
-              StrokeThickness='2' />
-        <Line X1="0" Y1="100"
-              X2="{Binding ActualWidth, Mode=OneWay, ElementName=Background}" Y2="100"
-              Stroke="#B1B7BA"
-              StrokeThickness='2' />
-    </Canvas>
-    -->
 </UserControl>
